@@ -34,20 +34,36 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
 
 	@Bean
-	public Docket api() {
+	public Docket apiV1() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
-				.apis(RequestHandlerSelectors.basePackage("com.spring.implementation.controller")) // Replace with your
+				.apis(RequestHandlerSelectors.basePackage("com.spring.implementation.controllerV1")) // Replace with your
 																									// controller
 																									// package
-				.paths(PathSelectors.any()).build().apiInfo(apiInfo());
+				.paths(PathSelectors.any()).build().groupName("v1").apiInfo(apiInfo(1));
 	}
 
-	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("Hello API Exposed")
-				.description("This is a Get Hello API . WHich will greet you").version("1.0").build();
+	@Bean
+    public Docket apiV2() {
+        return new Docket(DocumentationType.SWAGGER_2)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("com.spring.implementation.controllerV2"))
+            .paths(PathSelectors.any())
+            .build()
+            .groupName("v2")
+            .apiInfo(apiInfo(2));
+    }
 
+	private ApiInfo apiInfo(int version) {
+	    String title = "CRUD API's for operating over Items";
+	    String description = "These API's can be used to perform Database Operations over Items date";
+	    String apiVersion = (version == 1) ? "1.0 (Deprecated)" : "2.0 (Active)";
+
+	    return new ApiInfoBuilder()
+	        .title(title)
+	        .description(description)
+	        .version(apiVersion)
+	        .build();
 	}
-
 	@Bean
     public WebMvcEndpointHandlerMapping webEndpointServletHandlerMapping(WebEndpointsSupplier webEndpointsSupplier, ServletEndpointsSupplier servletEndpointsSupplier, ControllerEndpointsSupplier controllerEndpointsSupplier, EndpointMediaTypes endpointMediaTypes, CorsEndpointProperties corsProperties, WebEndpointProperties webEndpointProperties, Environment environment) {
             List<ExposableEndpoint<?>> allEndpoints = new ArrayList<>();
